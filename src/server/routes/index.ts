@@ -105,7 +105,7 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
     }
   )
 
-  // Create a todo with client - Working
+  // Create a todo - Working
   router.get(
     {
       path: '/api/custom_plugin/create-task/{data}',
@@ -126,7 +126,8 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
         tags: ["bug", "breaking"],
         priority,
         completed: false,
-        finish_date: finishDate
+        finish_date: finishDate,
+        created_at: new Date().toISOString()
       };
     
       var res = await client.index({
@@ -156,8 +157,14 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
 
       const params = JSON.parse(p)
 
+      let completed_at = null
+      if(!params.completed === true) {
+        completed_at = new Date().toISOString()
+      }
+
       var document = {
-        completed: !params.completed
+        completed: !params.completed,
+        completed_at
       };
 
       var res = await client.update({

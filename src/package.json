@@ -10,7 +10,7 @@
     "test:jest:dev": "../../node_modules/.bin/jest --watch --config ./test/jest.config.js"
   },
   "dependencies": {
-    "chart.js": "^4.2.1",
+    "chart.js": "3.2.0",
     "react-chartjs-2": "^5.2.0",
     "styled-components": "^5.3.6"
   },

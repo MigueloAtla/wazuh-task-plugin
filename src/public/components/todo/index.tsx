@@ -1,45 +1,24 @@
-import React, { useEffect, useState} from 'react';
-import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui';
+import React, { useEffect, useState, useMemo} from 'react';
+import { 
+  EuiFlexGroup, 
+  EuiFlexItem, 
+  EuiSpacer,
+  EuiTabs,
+  EuiTab,
+  EuiText,
+  EuiNotificationBadge,
+  EuiIcon 
+} from '@elastic/eui';
 import { TodoList } from './todoList';
 import { TodoInput } from './input';
 import { Table } from './table';
+import { VisualizationTabContent } from './chart';
 
 export const TodoApp = ({ http }) => {
   const [todos, setTodos] = useState([])
-  // const [todos, setTodos] = useState([
-  //   {
-  //     id: 1,
-  //     title: 'Watch the next Marvel Movie',
-  //     completed: false,
-  //     tags: ['bugfix', 'enhancement'],
-  //     priority: 0
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Record the next Video',
-  //     completed: false,
-  //     tags: ['warning'],
-  //     priority: 1
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Wash the dishes',
-  //     completed: false,
-  //     tags: ['bugfix'],
-  //     priority: 1
-  //   },
-  //   {
-  //     id: 4,
-  //     title: 'Study 2 hours',
-  //     completed: false,
-  //     tags: ['enhancement'],
-  //     priority: 2
-  //   }
-  // ])
-  
-  const [activeFilter, setActiveFilter] = useState('all');
+  // const [activeFilter, setActiveFilter] = useState('all');
 
-  const [filteredTodos, setFilteredTodos] = useState(todos);
+  // const [filteredTodos, setFilteredTodos] = useState(todos);
 
   const getTodos = () => {
     http.get(`/api/custom_plugin/get-todos`).then((res) => {
@@ -102,56 +81,115 @@ export const TodoApp = ({ http }) => {
     setTodos(updatedList);
   }
 
-  const showAllTodos = () => {
-    setActiveFilter('all')
-  }
-
-  const showActiveTodos = () => {
-    setActiveFilter('active')
-  }
-
-  const showCompletedTodos = () => {
-    setActiveFilter('completed')
-  }
-  
-  useEffect(() => {
-    if (activeFilter === 'all') {
-      setFilteredTodos(todos);
-    } else if (activeFilter === 'active') {
-        const activeTodos = todos.filter(todo => todo.completed === false);
-        setFilteredTodos(activeTodos);
-    } else if (activeFilter === 'completed') {
-        const completedTodos = todos.filter(todo => todo.completed === true);
-        setFilteredTodos(completedTodos);
-    }
+  // TABS
+  const tabs = [
+    {
+      id: 'todos-tab--id',
+      name: 'Tasks',
+      content: (
+        <TodoTabContent 
+          http={http}
+          addTodo={addTodo}
+          todos={todos}
+          handleSetComplete={handleSetComplete}
+          handleDelete={handleDelete}
+          handleClearComplete={handleClearComplete}
+        />
+      ),
+    },
+    {
+      id: 'visualization-tab--id',
+      name: 'Visualization',
+      content: (
+        <VisualizationTabContent todos={todos}/>
+      ),
+    },
     
-  },[activeFilter, todos]);
+  ];
 
+  // logic for tabs
+  const [selectedTabId, setSelectedTabId] = useState('visualization-tab--id');
+  const selectedTabContent = useMemo(() => {
+    return tabs.find((obj) => obj.id === selectedTabId)?.content;
+  }, [ selectedTabId, todos ]);
+
+  const onSelectedTabChanged = (id: string) => {
+    setSelectedTabId(id);
+  };
+
+  const renderTabs = () => {
+    return tabs.map((tab, index) => (
+      <EuiTab
+        key={index}
+        onClick={() => onSelectedTabChanged(tab.id)}
+        isSelected={tab.id === selectedTabId}
+      >
+        {tab.name}
+      </EuiTab>
+    ));
+  };
+
+  return (
+    <>
+      <EuiTabs>{renderTabs()}</EuiTabs>
+      {selectedTabContent}
+    </>
+    // <EuiFlexGroup justifyContent='center' style={{margin: '50px'}}>
+    //   <EuiFlexGroup grow={false} direction='column' style={{gap: '20px'}}>
+    //     <TodoInput addTodo={addTodo} http={http}/>
+        // {/* <TodoList
+        //   activeFilter={activeFilter}
+        //   todos={filteredTodos}
+        //   showAllTodos={showAllTodos}
+        //   showActiveTodos={showActiveTodos}
+        //   showCompletedTodos={showCompletedTodos}
+        //   handleSetComplete={handleSetComplete}
+        //   handleDelete={handleDelete}
+        //   handleClearComplete={handleClearComplete} /> */}
+    //   <Table 
+    //     http={http}
+    //     activeFilter={activeFilter}
+    //     todos={filteredTodos}
+    //     showAllTodos={showAllTodos}
+    //     showActiveTodos={showActiveTodos}
+    //     showCompletedTodos={showCompletedTodos}
+    //     handleSetComplete={handleSetComplete}
+    //     handleDelete={handleDelete}
+    //     handleClearComplete={handleClearComplete}
+    //     />
+    //     </EuiFlexGroup>
+    // </EuiFlexGroup>
+  );
+};
+
+const TodoTabContent = ({ 
+  http,
+  addTodo,
+  // activeFilter,
+  todos,
+  // showAllTodos,
+  // showActiveTodos,
+  // showCompletedTodos,
+  handleSetComplete,
+  handleDelete,
+  handleClearComplete
+}) => {
   return (
     <EuiFlexGroup justifyContent='center' style={{margin: '50px'}}>
       <EuiFlexGroup grow={false} direction='column' style={{gap: '20px'}}>
         <TodoInput addTodo={addTodo} http={http}/>
-        {/* <TodoList
-          activeFilter={activeFilter}
-          todos={filteredTodos}
-          showAllTodos={showAllTodos}
-          showActiveTodos={showActiveTodos}
-          showCompletedTodos={showCompletedTodos}
+        <Table 
+          http={http}
+          // activeFilter={activeFilter}
+          todos={todos}
+          // showAllTodos={showAllTodos}
+          // showActiveTodos={showActiveTodos}
+          // showCompletedTodos={showCompletedTodos}
           handleSetComplete={handleSetComplete}
           handleDelete={handleDelete}
-          handleClearComplete={handleClearComplete} /> */}
-      <Table 
-        http={http}
-        activeFilter={activeFilter}
-        todos={filteredTodos}
-        showAllTodos={showAllTodos}
-        showActiveTodos={showActiveTodos}
-        showCompletedTodos={showCompletedTodos}
-        handleSetComplete={handleSetComplete}
-        handleDelete={handleDelete}
-        handleClearComplete={handleClearComplete}
-        />
-        </EuiFlexGroup>
+          handleClearComplete={handleClearComplete}
+          />
+      </EuiFlexGroup>
     </EuiFlexGroup>
-  );
-};
+  )
+}

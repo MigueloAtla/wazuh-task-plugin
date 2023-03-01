@@ -65,11 +65,11 @@ const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 
 export const Table = ({
   http,
-  activeFilter,
+  // activeFilter,
   todos,
-  showAllTodos,
-  showActiveTodos,
-  showCompletedTodos,
+  // showAllTodos,
+  // showActiveTodos,
+  // showCompletedTodos,
   handleSetComplete,
   handleDelete,
   handleClearComplete,
@@ -358,11 +358,8 @@ export const Table = ({
     <EuiFlexGroup>
 
       <EuiFlexItem grow={6}>
-        <EuiTitle size="s">
-          <h3>JS execution</h3>
-        </EuiTitle>
 
-        <EuiSpacer size="s" />
+        {/* <EuiSpacer size="s" /> */}
 
         {renderTable()}
       </EuiFlexItem>
