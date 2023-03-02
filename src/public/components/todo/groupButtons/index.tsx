@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   EuiButtonGroup,
   EuiSpacer,
-  useGeneratedHtmlId,
 } from '@elastic/eui';
 
 export const GroupButtons = ({priority, setPriority}) => {
-  // const basicButtonGroupPrefix = useGeneratedHtmlId({
-  //   prefix: 'basicButtonGroup',
-  // });
   const basicButtonGroupPrefix = `basicButtonGroup-${Math.floor(Math.random() * 1000000000000)}`
 
   const toggleButtons = [
     {
       id: '0',
-      label: 'Hight',
+      label: 'High',
     },
     {
       id: '1',
@@ -26,11 +22,6 @@ export const GroupButtons = ({priority, setPriority}) => {
     },
   ];
 
-
-  // const [toggleIdSelected, setToggleIdSelected] = useState(
-  //   `${basicButtonGroupPrefix}__1`
-  // );
-
   const onChange = (optionId) => {
     console.log(optionId)
     setPriority(optionId);
@@ -40,7 +31,7 @@ export const GroupButtons = ({priority, setPriority}) => {
     <>
       <EuiButtonGroup 
         isFullWidth
-        legend="This is a basic group"
+        legend="Group of priority options"
         options={toggleButtons}
         idSelected={priority}
         onChange={(id) => onChange(id)}

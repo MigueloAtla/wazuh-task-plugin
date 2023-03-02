@@ -119,11 +119,11 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
 
       const {data} = request.params
       const content = JSON.parse(data)
-      const {text, priority, finishDate } = content
+      const {text, priority, finishDate, tags } = content
 
       var document = {
         text,
-        tags: ["bug", "breaking"],
+        tags,
         priority,
         completed: false,
         finish_date: finishDate,

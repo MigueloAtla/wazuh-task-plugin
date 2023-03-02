@@ -3,31 +3,21 @@ import {
   formatDate,
   Comparators,
   EuiBasicTable,
-  EuiBasicTableColumn,
-  EuiTableSortingType,
-  Criteria,
   EuiHealth,
-  EuiIcon,
-  EuiLink,
-  EuiToolTip,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiSwitch,
   EuiSpacer,
-  EuiCode,
   EuiBadge,
   EuiButtonIcon,
   EuiFieldText,
   EuiText,
   EuiCallOut,
-  EuiCodeBlock,
-  EuiTitle,
-  EuiSearchBar
+  EuiSearchBar,
+  EuiPopover,
+  EuiButtonEmpty
 } from '@elastic/eui';
 import { EditModal } from '../editModal';
 import { TAGS } from '../../../constants';
-
-// import { formatDate } from '../../../utils/utils'
 
 // type Todo = {
 //   id: number;
@@ -52,10 +42,10 @@ const loadTags = () => {
       resolve(
         TAGS.map((tag) => ({
           value: tag.name,
-          view: <EuiHealth color={tag.color}>{tag.name}</EuiHealth>
+          view: <EuiHealth color={tag.bgcolor}>{tag.name}</EuiHealth>
         }))
       );
-    }, 2000);
+    }, 0);
   });
 };
 
@@ -65,11 +55,7 @@ const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 
 export const Table = ({
   http,
-  // activeFilter,
   todos,
-  // showAllTodos,
-  // showActiveTodos,
-  // showCompletedTodos,
   handleSetComplete,
   handleDelete,
   handleClearComplete,
@@ -89,7 +75,6 @@ export const Table = ({
     if (error) {
       setError(error);
     } else {
-      console.log("query", query);
       setError(null);
       setQuery(query);
     }
@@ -109,7 +94,7 @@ export const Table = ({
         name: "Tags",
         multiSelect: "or",
         operator: "exact",
-        cache: 10000, // will cache the loaded tags for 10 sec
+        cache: 10000,
         options: () => loadTags()
       }
     ];
@@ -191,22 +176,17 @@ export const Table = ({
         sortable: true,
         truncateText: true,
         render: (text) => (
-          // <span>
-          //   {todo.text}
-          // </span>
-          <EditTitle text={text}/>
+          <EuiText>
+            <p>
+              {text}
+            </p>
+          </EuiText>
         ),
       },
       {
         field: 'tags',
         name: 'Tags',
-        render: (tags) => {
-          return tags && tags.map((tag) => {
-            return <EuiFlexItem grow={false} key={tag}>
-              <EuiBadge color={'primary'}>{tag}</EuiBadge>
-            </EuiFlexItem>
-          })
-        },
+        render: (tags) => <TagsWithPopover tags={tags} />,
       },
       {
         field: 'priority',
@@ -358,9 +338,6 @@ export const Table = ({
     <EuiFlexGroup>
 
       <EuiFlexItem grow={6}>
-
-        {/* <EuiSpacer size="s" /> */}
-
         {renderTable()}
       </EuiFlexItem>
     </EuiFlexGroup>
@@ -376,33 +353,7 @@ export const Table = ({
   );
 };
 
-const EditTitle = ({ text }) => {
-  const [ edit, setEdit ] = useState(false);
-
-  return (
-    <EuiFlexItem grow={false} style={{ flexDirection: 'row' }}>
-      {
-        !edit ? 
-        <p onClick={() => {
-          setEdit(true)
-          }}>
-            {text}
-          </p>
-        : 
-          <>
-            <EuiFieldText type="text" value={text} onChange={(e) => {
-              console.log(e.target.value)
-            }} />
-            <span onClick={() => {setEdit(false)}}>x</span>
-          </>
-      }
-    </EuiFlexItem>
-  )
-}
-
 const CompleteCheckbox = ({ completed, id, handleSetComplete }) => {
-  // console.log('completed', completed)
-  // console.log('id', id)
   return (
     <EuiFlexItem grow={false}>
       {
@@ -411,21 +362,19 @@ const CompleteCheckbox = ({ completed, id, handleSetComplete }) => {
             onClick={(e) => {
               e.stopPropagation()
               handleSetComplete(id)
-              console.log('incomplete')
             }}
-            iconType="cross"
+            iconType="stopFilled"
             aria-label="Incomplete"
           />
         )
         : 
         (
           <EuiButtonIcon 
-          onClick={(e) => {
-            e.stopPropagation()
-            handleSetComplete(id)
-            console.log('complete')
-          }}
-            iconType="check"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleSetComplete(id)
+            }}
+            iconType="stop"
             aria-label="Complete"
           />
         )
@@ -455,5 +404,51 @@ const EditButton = ({ todo, handleEdit }) => {
     iconType="pencil"
     aria-label="Edit task"
     />
+  )
+}
+
+const TagsWithPopover = ({ tags }) => {
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const onButtonClick = () =>
+  setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen);
+  const closePopover = () => setIsPopoverOpen(false);
+  
+  const getTagColor = (tag) => {
+    let bgcolor = null
+    TAGS.forEach((tag_obj) => {
+      if(tag_obj.name === tag) bgcolor = tag_obj.bgcolor
+    }) 
+    return bgcolor
+  }
+  
+  return (
+    <EuiFlexItem grow={false}>
+      <EuiPopover
+        button={
+          <EuiButtonEmpty
+            iconType="questionInCircle"
+            iconSide="right"
+            onClick={onButtonClick}
+          >
+            <div>
+          {
+            tags && tags.map((tag) => <EuiHealth key={tag} color={getTagColor(tag)} />)
+          }
+        </div>
+          </EuiButtonEmpty>
+        }
+        isOpen={isPopoverOpen}
+        closePopover={closePopover}
+        anchorPosition="downCenter"
+      >
+        {
+          tags && tags.map((tag) => {
+            return <div>
+              <EuiHealth color={getTagColor(tag)}>{tag}</EuiHealth>
+            </div>
+          })
+        }
+      </EuiPopover>
+    </EuiFlexItem>
   )
 }

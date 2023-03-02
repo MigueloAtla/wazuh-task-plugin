@@ -16,10 +16,11 @@ import {
   EuiButtonGroup,
   EuiButtonEmpty
 } from '@elastic/eui';
+import { TAGS } from '../../../constants';
 
 import { GroupButtons } from '../groupButtons';
 
-export const Modal = ({ finishDate, setFinishDate, priority, setPriority }) => {
+export const Modal = ({ finishDate, setFinishDate, priority, setPriority, tags, setTags }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const closeModal = () => setIsModalVisible(false);
@@ -32,11 +33,6 @@ export const Modal = ({ finishDate, setFinishDate, priority, setPriority }) => {
   };
 
   let modal;
-
-  const errors = [
-    "Here's an example of an error",
-    'You might have more than one error, so pass an array.',
-  ];
 
   if (isModalVisible) {
     modal = (
@@ -72,10 +68,42 @@ export const Modal = ({ finishDate, setFinishDate, priority, setPriority }) => {
             </EuiText>
             <GroupButtons setPriority={setPriority} priority={priority} />
           </EuiFlexItem>
+
+          <EuiSpacer />
+
+          <EuiFlexItem>
+            <EuiText>
+              Tags:
+            </EuiText>
+            {
+                TAGS.map((tag, i) => {
+                  return (
+                    <EuiButtonEmpty 
+                      key={tag.name + i}
+                      size="s" 
+                      style={{
+                        backgroundColor: tag.bgcolor,
+                        width: 'fit-content',
+                        borderRadius: '4px',
+                        color: tag.color
+                      }} 
+                      iconType="tag" 
+                      iconSide="left"
+                      onClick={() => {
+                        if(tags.includes(tag.name)){
+                          setTags(tags.filter(t => t !== tag.name))
+                        } else {
+                          setTags([...tags, tag.name])
+                        }
+                      }}
+                      >
+                      {tag.name}
+                    </EuiButtonEmpty>
+                )})
+              }
+          </EuiFlexItem>
           
         </EuiModalBody>
-
-        
 
         <EuiModalFooter>
           <EuiButton onClick={closeModal} fill>

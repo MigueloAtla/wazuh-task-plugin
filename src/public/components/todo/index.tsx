@@ -1,28 +1,18 @@
 import React, { useEffect, useState, useMemo} from 'react';
 import { 
   EuiFlexGroup, 
-  EuiFlexItem, 
-  EuiSpacer,
   EuiTabs,
   EuiTab,
-  EuiText,
-  EuiNotificationBadge,
-  EuiIcon 
 } from '@elastic/eui';
-import { TodoList } from './todoList';
 import { TodoInput } from './input';
 import { Table } from './table';
 import { VisualizationTabContent } from './chart';
 
-export const TodoApp = ({ http }) => {
+export const TodoApp = ({ http, notifications }) => {
   const [todos, setTodos] = useState([])
-  // const [activeFilter, setActiveFilter] = useState('all');
-
-  // const [filteredTodos, setFilteredTodos] = useState(todos);
 
   const getTodos = () => {
     http.get(`/api/custom_plugin/get-todos`).then((res) => {
-      // const res_todos = res ? res.map(todo => todo._source) : [];
       setTodos(res);
     })
   }
@@ -81,7 +71,7 @@ export const TodoApp = ({ http }) => {
     setTodos(updatedList);
   }
 
-  // TABS
+  // Tabs
   const tabs = [
     {
       id: 'todos-tab--id',
@@ -89,6 +79,7 @@ export const TodoApp = ({ http }) => {
       content: (
         <TodoTabContent 
           http={http}
+          notifications={notifications}
           addTodo={addTodo}
           todos={todos}
           handleSetComplete={handleSetComplete}
@@ -99,7 +90,7 @@ export const TodoApp = ({ http }) => {
     },
     {
       id: 'visualization-tab--id',
-      name: 'Visualization',
+      name: 'Visualizations',
       content: (
         <VisualizationTabContent todos={todos}/>
       ),
@@ -108,7 +99,7 @@ export const TodoApp = ({ http }) => {
   ];
 
   // logic for tabs
-  const [selectedTabId, setSelectedTabId] = useState('visualization-tab--id');
+  const [selectedTabId, setSelectedTabId] = useState('todos-tab--id');
   const selectedTabContent = useMemo(() => {
     return tabs.find((obj) => obj.id === selectedTabId)?.content;
   }, [ selectedTabId, todos ]);
@@ -134,57 +125,25 @@ export const TodoApp = ({ http }) => {
       <EuiTabs>{renderTabs()}</EuiTabs>
       {selectedTabContent}
     </>
-    // <EuiFlexGroup justifyContent='center' style={{margin: '50px'}}>
-    //   <EuiFlexGroup grow={false} direction='column' style={{gap: '20px'}}>
-    //     <TodoInput addTodo={addTodo} http={http}/>
-        // {/* <TodoList
-        //   activeFilter={activeFilter}
-        //   todos={filteredTodos}
-        //   showAllTodos={showAllTodos}
-        //   showActiveTodos={showActiveTodos}
-        //   showCompletedTodos={showCompletedTodos}
-        //   handleSetComplete={handleSetComplete}
-        //   handleDelete={handleDelete}
-        //   handleClearComplete={handleClearComplete} /> */}
-    //   <Table 
-    //     http={http}
-    //     activeFilter={activeFilter}
-    //     todos={filteredTodos}
-    //     showAllTodos={showAllTodos}
-    //     showActiveTodos={showActiveTodos}
-    //     showCompletedTodos={showCompletedTodos}
-    //     handleSetComplete={handleSetComplete}
-    //     handleDelete={handleDelete}
-    //     handleClearComplete={handleClearComplete}
-    //     />
-    //     </EuiFlexGroup>
-    // </EuiFlexGroup>
   );
 };
 
 const TodoTabContent = ({ 
   http,
+  notifications,
   addTodo,
-  // activeFilter,
   todos,
-  // showAllTodos,
-  // showActiveTodos,
-  // showCompletedTodos,
   handleSetComplete,
   handleDelete,
   handleClearComplete
 }) => {
   return (
     <EuiFlexGroup justifyContent='center' style={{margin: '50px'}}>
-      <EuiFlexGroup grow={false} direction='column' style={{gap: '20px'}}>
-        <TodoInput addTodo={addTodo} http={http}/>
+      <EuiFlexGroup direction='column' style={{gap: '20px'}}>
+        <TodoInput addTodo={addTodo} http={http} notifications={notifications} />
         <Table 
           http={http}
-          // activeFilter={activeFilter}
           todos={todos}
-          // showAllTodos={showAllTodos}
-          // showActiveTodos={showActiveTodos}
-          // showCompletedTodos={showCompletedTodos}
           handleSetComplete={handleSetComplete}
           handleDelete={handleDelete}
           handleClearComplete={handleClearComplete}
