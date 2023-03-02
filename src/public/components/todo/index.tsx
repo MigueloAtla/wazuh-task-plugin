@@ -37,7 +37,6 @@ export const TodoApp = ({ http, notifications }) => {
   }
 
   const handleSetComplete = (id) => {
-    console.log('UPDATING TODO')
     const updatedList = todos.map(todo => {
       if (todo.id === id) {
         const args = {
@@ -45,7 +44,6 @@ export const TodoApp = ({ http, notifications }) => {
           completed: todo.completed
         }
         const p = JSON.stringify(args)
-        const completed = todo.completed ? 'false' : 'true'
         http.put(`/api/custom_plugin/update-todo/${p}`).then((res) => {
           console.log('UPDATED TODO')
         })
@@ -82,6 +80,7 @@ export const TodoApp = ({ http, notifications }) => {
           notifications={notifications}
           addTodo={addTodo}
           todos={todos}
+          setTodos={setTodos}
           handleSetComplete={handleSetComplete}
           handleDelete={handleDelete}
           handleClearComplete={handleClearComplete}
@@ -133,6 +132,7 @@ const TodoTabContent = ({
   notifications,
   addTodo,
   todos,
+  setTodos,
   handleSetComplete,
   handleDelete,
   handleClearComplete
@@ -140,10 +140,17 @@ const TodoTabContent = ({
   return (
     <EuiFlexGroup justifyContent='center' style={{margin: '50px'}}>
       <EuiFlexGroup direction='column' style={{gap: '20px'}}>
-        <TodoInput addTodo={addTodo} http={http} notifications={notifications} />
+        <TodoInput 
+          addTodo={addTodo} 
+          http={http} 
+          notifications={notifications} 
+          todos={todos}
+          setTodos={setTodos}
+          />
         <Table 
           http={http}
           todos={todos}
+          setTodos={setTodos}
           handleSetComplete={handleSetComplete}
           handleDelete={handleDelete}
           handleClearComplete={handleClearComplete}

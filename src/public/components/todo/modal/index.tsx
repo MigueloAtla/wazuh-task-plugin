@@ -19,6 +19,7 @@ import {
 import { TAGS } from '../../../constants';
 
 import { GroupButtons } from '../groupButtons';
+import { TagSelector } from '../tagSelector';
 
 export const Modal = ({ finishDate, setFinishDate, priority, setPriority, tags, setTags }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -51,12 +52,13 @@ export const Modal = ({ finishDate, setFinishDate, priority, setPriority, tags, 
 
             <EuiSpacer size="l" />
 
+            <EuiText>End date for this task completion(optional)</EuiText>
             <EuiDatePicker
               showTimeSelect
               selected={finishDate}
               onChange={handleChange}
               onClear={() => handleChange(null)}
-              placeholder="Clearable"
+              placeholder="Select a date"
             />
 
           </div>
@@ -71,37 +73,7 @@ export const Modal = ({ finishDate, setFinishDate, priority, setPriority, tags, 
 
           <EuiSpacer />
 
-          <EuiFlexItem>
-            <EuiText>
-              Tags:
-            </EuiText>
-            {
-                TAGS.map((tag, i) => {
-                  return (
-                    <EuiButtonEmpty 
-                      key={tag.name + i}
-                      size="s" 
-                      style={{
-                        backgroundColor: tag.bgcolor,
-                        width: 'fit-content',
-                        borderRadius: '4px',
-                        color: tag.color
-                      }} 
-                      iconType="tag" 
-                      iconSide="left"
-                      onClick={() => {
-                        if(tags.includes(tag.name)){
-                          setTags(tags.filter(t => t !== tag.name))
-                        } else {
-                          setTags([...tags, tag.name])
-                        }
-                      }}
-                      >
-                      {tag.name}
-                    </EuiButtonEmpty>
-                )})
-              }
-          </EuiFlexItem>
+          <TagSelector tags={tags} setTags={setTags} />
           
         </EuiModalBody>
 

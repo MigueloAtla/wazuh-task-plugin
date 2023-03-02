@@ -56,6 +56,7 @@ const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 export const Table = ({
   http,
   todos,
+  setTodos,
   handleSetComplete,
   handleDelete,
   handleClearComplete,
@@ -207,14 +208,16 @@ export const Table = ({
         name: 'Finish Date',
         sortable: true,
         truncateText: true,
-        render: (date) => <EuiText size='s'>{formatDate(date)}</EuiText>
+        render: (date) => {
+          console.log(date)
+        return <EuiText size='s'>{formatDate(date)}</EuiText>}
       },
       {
         field: '',
         name: 'Edit',
         width: '80px',
         render: (todo) => (
-            <EditModal todo={todo} http={http} />
+            <EditModal todo={todo} http={http} todos={todos} setTodos={setTodos} />
           )
       },
       {
@@ -309,7 +312,7 @@ export const Table = ({
     
     return (
       <EuiBasicTable
-        tableCaption="Demo for EuiBasicTable with sorting"
+        tableCaption="Table with tasks"
         // items={queriedItems}
         items={pageOfItems}
         columns={columns}
@@ -346,8 +349,8 @@ export const Table = ({
   return (
     <>
       {renderSearch()}
-      <EuiSpacer size="s" />
-      <EuiSpacer size="l" />
+      {/* <EuiSpacer size="s" />
+      <EuiSpacer size="l" /> */}
       {content}
     </>
   );
@@ -395,18 +398,6 @@ const DeleteButton = ({ todo, handleDelete }) => {
   )
 }
 
-const EditButton = ({ todo, handleEdit }) => { 
-  return (
-    <EuiButtonIcon 
-    legend="Edit task"
-    onClick={() => handleEdit(todo)}
-    size="s"
-    iconType="pencil"
-    aria-label="Edit task"
-    />
-  )
-}
-
 const TagsWithPopover = ({ tags }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const onButtonClick = () =>
@@ -443,7 +434,7 @@ const TagsWithPopover = ({ tags }) => {
       >
         {
           tags && tags.map((tag) => {
-            return <div>
+            return <div key={tag}>
               <EuiHealth color={getTagColor(tag)}>{tag}</EuiHealth>
             </div>
           })

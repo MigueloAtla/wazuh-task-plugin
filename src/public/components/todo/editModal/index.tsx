@@ -8,7 +8,6 @@ import {
   EuiModalHeaderTitle,
   EuiDatePicker, 
   EuiSpacer, 
-  EuiFormRow,
   EuiFlexItem,
   EuiText,
   EuiButtonEmpty,
@@ -19,8 +18,9 @@ import moment from 'moment';
 import { TAGS } from '../../../constants';
 
 import { GroupButtons } from '../groupButtons';
+import { TagSelector } from '../tagSelector';
 
-export const EditModal = ({ todo, http }) => {
+export const EditModal = ({ todo, http, todos, setTodos }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const closeModal = () => setIsModalVisible(false);
@@ -29,16 +29,26 @@ export const EditModal = ({ todo, http }) => {
     // http post to update todo
     const todoObj = {
       text,
-      finishDate,
+      finish_date: finishDate,
       priority,
       tags,
       id: todo.id
     }
-    console.log(todoObj)
     const data = JSON.stringify(todoObj)
-    console.log(data)
     http.put(`/api/custom_plugin/edit-todo/${data}`).then((res) => {
-      console.log(res)
+
+      // update todos with the updated todo
+      const newTodos = todos.map(t => {
+        if(t.id === todo.id){
+          const finishDate = todoObj.finish_date.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+          todoObj.finish_date = finishDate
+          return todoObj
+        } else {
+          return t
+        }
+      })
+      setTodos(newTodos)
+      
     })
     closeModal()
   };
@@ -47,10 +57,6 @@ export const EditModal = ({ todo, http }) => {
   const [priority, setPriority] = useState(todo.priority);
   const [text, setText] = useState(todo.text);
   const [tags, setTags] = useState(todo.tags);
-
-  useEffect(() => {
-    console.log(tags)
-  }, [tags])
 
   const handleChange = (date) => {
     setFinishDate(date);
@@ -72,7 +78,7 @@ export const EditModal = ({ todo, http }) => {
           minWidth: '426px'
         }}>
         <EuiModalHeader>
-          <EuiModalHeaderTitle>Add data to your task</EuiModalHeaderTitle>
+          <EuiModalHeaderTitle>Edit the data of this task</EuiModalHeaderTitle>
         </EuiModalHeader>
 
         <EuiModalBody>
@@ -80,6 +86,7 @@ export const EditModal = ({ todo, http }) => {
 
             <EuiSpacer size="l" />
 
+            <EuiText>Task text:</EuiText>
             <EuiFieldText 
               type="text" 
               value={text} 
@@ -87,7 +94,8 @@ export const EditModal = ({ todo, http }) => {
             />
 
             <EuiSpacer size="l" />
-
+            
+            <EuiText>Finish date:</EuiText>
             {finishDate && <EuiDatePicker
               showTimeSelect
               selected={finishDate}
@@ -108,39 +116,7 @@ export const EditModal = ({ todo, http }) => {
 
           <EuiSpacer />
 
-          <EuiFlexItem>
-            <EuiText>
-              Tags:
-            </EuiText>
-            <>
-              {
-                TAGS.map((tag, i) => {
-                  return (
-                    <EuiButtonEmpty 
-                      key={tag.name + i}
-                      size="s" 
-                      style={{
-                        backgroundColor: tag.bgcolor,
-                        width: 'fit-content',
-                        borderRadius: '4px',
-                        color: tag.color
-                      }} 
-                      iconType="tag" 
-                      iconSide="left"
-                      onClick={() => {
-                        if(tags.includes(tag.name)){
-                          setTags(tags.filter(t => t !== tag.name))
-                        } else {
-                          setTags([...tags, tag.name])
-                        }
-                      }}
-                      >
-                      {tag.name}
-                    </EuiButtonEmpty>
-                )})
-              }
-            </>
-          </EuiFlexItem>
+          <TagSelector tags={tags} setTags={setTags} />
           
         </EuiModalBody>
 

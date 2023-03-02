@@ -5,7 +5,7 @@ import {
  } from '@elastic/eui';
  import { Modal } from '../modal';
 
-export const TodoInput = ({ addTodo, http, notifications }) => {
+export const TodoInput = ({ addTodo, http, notifications, todos, setTodos }) => {
 
   const [text, setText] = useState('');
   const [finishDate, setFinishDate] = useState(null);
@@ -17,12 +17,12 @@ export const TodoInput = ({ addTodo, http, notifications }) => {
       finishDate,
       priority,
       text,
-      tags
+      tags,
+      created_at: new Date().toISOString()
     }
     const data = JSON.stringify(p)
     
     http.get(`/api/custom_plugin/create-task/${data}`).then((res) => {
-      console.log(res)
       if(res.statusCode === 201) {
         notifications.toasts.addSuccess(
           i18n.translate('customPlugin.dataUpdated', {
@@ -30,6 +30,8 @@ export const TodoInput = ({ addTodo, http, notifications }) => {
           })
           );
           setText('');
+          const todoList = [...todos, p];
+          setTodos(todoList)
         }
     });
   };

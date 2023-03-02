@@ -63,7 +63,7 @@ export const CustomPluginApp = ({
           <EuiPage restrictWidth="1000px">
             <EuiPageBody component="main">
               <EuiPageHeader>
-                <EuiTitle size="l">
+                {/* <EuiTitle size="l">
                   <h1>
                     <FormattedMessage
                       id="customPlugin.helloWorldText"
@@ -71,16 +71,16 @@ export const CustomPluginApp = ({
                       values={{ name: PLUGIN_NAME }}
                     />
                   </h1>
-                </EuiTitle>
+                </EuiTitle> */}
               </EuiPageHeader>
               <EuiPageContent>
                 <EuiPageContentHeader>
                 </EuiPageContentHeader>
                 <EuiPageContentBody>
 
-                  <EuiText>
+                  {/* <EuiText>
                     <EuiHorizontalRule />
-                  </EuiText>
+                  </EuiText> */}
 
                   <TodoApp http={http} notifications={notifications} />
                   

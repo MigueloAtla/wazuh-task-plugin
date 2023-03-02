@@ -119,7 +119,7 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
 
       const {data} = request.params
       const content = JSON.parse(data)
-      const {text, priority, finishDate, tags } = content
+      const {text, priority, finishDate, tags, created_at } = content
 
       var document = {
         text,
@@ -127,7 +127,7 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
         priority,
         completed: false,
         finish_date: finishDate,
-        created_at: new Date().toISOString()
+        created_at
       };
     
       var res = await client.index({
@@ -194,12 +194,13 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
       
       const {data} = request.params
 
+      
       const params = JSON.parse(data)
 
       var document = {
         text: params.text,
         priority: params.priority,
-        finish_date: params.finishDate,
+        finish_date: params.finish_date,
         tags: params.tags
       };
 
