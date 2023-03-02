@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useMemo} from 'react';
 import { 
-  EuiFlexGroup, 
   EuiTabs,
   EuiTab,
 } from '@elastic/eui';
-import { TodoInput } from './input';
-import { Table } from './table';
-import { VisualizationTabContent } from './visualizations';
+import { TodoTabContent } from '../todoTabContent';
+import { VisualizationTabContent } from '../visualizations';
+import useStore from '../../store';
 
-export const TodoApp = ({ http, notifications }) => {
-  const [todos, setTodos] = useState([])
+export const AppConatiner = ({ http, notifications }) => {
+  // const [todos, setTodos] = useState([])
+  const todos = useStore(state => state.todos);
+  const setTodos = useStore(state => state.setTodos);
 
   const getTodos = () => {
     http.get(`/api/custom_plugin/get-todos`).then((res) => {
@@ -79,8 +80,8 @@ export const TodoApp = ({ http, notifications }) => {
           http={http}
           notifications={notifications}
           addTodo={addTodo}
-          todos={todos}
-          setTodos={setTodos}
+          // todos={todos}
+          // setTodos={setTodos}
           handleSetComplete={handleSetComplete}
           handleDelete={handleDelete}
           handleClearComplete={handleClearComplete}
@@ -126,36 +127,3 @@ export const TodoApp = ({ http, notifications }) => {
     </>
   );
 };
-
-const TodoTabContent = ({ 
-  http,
-  notifications,
-  addTodo,
-  todos,
-  setTodos,
-  handleSetComplete,
-  handleDelete,
-  handleClearComplete
-}) => {
-  return (
-    <EuiFlexGroup justifyContent='center' style={{margin: '50px'}}>
-      <EuiFlexGroup direction='column' style={{gap: '20px'}}>
-        <TodoInput 
-          addTodo={addTodo} 
-          http={http} 
-          notifications={notifications} 
-          todos={todos}
-          setTodos={setTodos}
-          />
-        <Table 
-          http={http}
-          todos={todos}
-          setTodos={setTodos}
-          handleSetComplete={handleSetComplete}
-          handleDelete={handleDelete}
-          handleClearComplete={handleClearComplete}
-          />
-      </EuiFlexGroup>
-    </EuiFlexGroup>
-  )
-}

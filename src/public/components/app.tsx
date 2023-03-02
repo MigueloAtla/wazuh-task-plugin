@@ -28,7 +28,7 @@ import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/
 import { PLUGIN_ID, PLUGIN_NAME } from '../../common';
 
 // Components
-import { TodoApp } from './todo';
+import { AppConatiner } from './appContainer';
 
 interface CustomPluginAppDeps {
   basename: string;
@@ -82,7 +82,7 @@ export const CustomPluginApp = ({
                     <EuiHorizontalRule />
                   </EuiText> */}
 
-                  <TodoApp http={http} notifications={notifications} />
+                  <AppConatiner http={http} notifications={notifications} />
                   
                 </EuiPageContentBody>
               </EuiPageContent>

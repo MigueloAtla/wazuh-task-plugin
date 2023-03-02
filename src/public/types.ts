@@ -11,3 +11,13 @@ export interface AppPluginStartDependencies {
   navigation: NavigationPublicPluginStart;
   data: DataPublicPluginStart
 }
+
+export interface Todo {
+  completed: boolean;
+  completed_at?: Date;
+  created_at: Date;
+  finish_date?: Date;
+  priority: number;
+  tags: string[];
+  text: string;
+}

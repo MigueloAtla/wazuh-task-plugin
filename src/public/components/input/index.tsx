@@ -4,13 +4,16 @@ import {
   EuiFieldText,
  } from '@elastic/eui';
  import { Modal } from '../modal';
+import useStore from '../../store';
 
-export const TodoInput = ({ addTodo, http, notifications, todos, setTodos }) => {
+export const TodoInput = ({ http, notifications }) => {
 
   const [text, setText] = useState('');
   const [finishDate, setFinishDate] = useState(null);
   const [priority, setPriority] = useState(null);
   const [tags, setTags] = useState([]);
+  const todos = useStore(state => state.todos);
+  const setTodos = useStore(state => state.setTodos);
 
   const onCreateHandler = () => {
     const p = {

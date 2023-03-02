@@ -7,17 +7,20 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
-  EuiBadge,
   EuiButtonIcon,
-  EuiFieldText,
   EuiText,
   EuiCallOut,
   EuiSearchBar,
-  EuiPopover,
-  EuiButtonEmpty
 } from '@elastic/eui';
+
 import { EditModal } from '../editModal';
-import { TAGS } from '../../../constants';
+import { TagsWithPopover } from '../tagsWithPopover';
+import { DeleteButton } from '../deleteButton';
+import { CompleteCheckbox } from '../completeCheckbox';
+
+import useStore from '../../store';
+
+import { TAGS } from '../../constants';
 
 // type Todo = {
 //   id: number;
@@ -51,12 +54,10 @@ const loadTags = () => {
 
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 
-
-
 export const Table = ({
   http,
-  todos,
-  setTodos,
+  // todos,
+  // setTodos,
   handleSetComplete,
   handleDelete,
   handleClearComplete,
@@ -71,6 +72,9 @@ export const Table = ({
   const [pageSize, setPageSize] = useState(15);
   const [sortField, setSortField] = useState('firstName');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const todos = useStore((state) => state.todos);
+  const setTodos = useStore((state) => state.setTodos);
 
   const onChange = ({ query, error }) => {
     if (error) {
@@ -165,10 +169,11 @@ export const Table = ({
         truncateText: true,
         width: '100px',
         render: (completed, todo) => (
-          // <span>
-          //   {todo.text}
-          // </span>
-          <CompleteCheckbox completed={completed} id={todo.id} handleSetComplete={handleSetComplete} />
+          <CompleteCheckbox 
+            completed={completed} 
+            id={todo.id} 
+            handleSetComplete={handleSetComplete} 
+            />
         ),
       },
       {
@@ -208,16 +213,19 @@ export const Table = ({
         name: 'Finish Date',
         sortable: true,
         truncateText: true,
-        render: (date) => {
-          console.log(date)
-        return <EuiText size='s'>{formatDate(date)}</EuiText>}
+        render: (date) => <EuiText size='s'>{formatDate(date)}</EuiText>
       },
       {
         field: '',
         name: 'Edit',
         width: '80px',
         render: (todo) => (
-            <EditModal todo={todo} http={http} todos={todos} setTodos={setTodos} />
+            <EditModal 
+              todo={todo} 
+              http={http} 
+              todos={todos} 
+              setTodos={setTodos} 
+              />
           )
       },
       {
@@ -313,7 +321,6 @@ export const Table = ({
     return (
       <EuiBasicTable
         tableCaption="Table with tasks"
-        // items={queriedItems}
         items={pageOfItems}
         columns={columns}
         pagination={pagination}
@@ -323,23 +330,8 @@ export const Table = ({
     )
   }
 
-  let esQueryDsl;
-  let esQueryString;
-
-  try {
-    esQueryDsl = EuiSearchBar.Query.toESQuery(query);
-  } catch (e) {
-    esQueryDsl = e.toString();
-  }
-  try {
-    esQueryString = EuiSearchBar.Query.toESQueryString(query);
-  } catch (e) {
-    esQueryString = e.toString();
-  }
-
   const content = renderError() || (
     <EuiFlexGroup>
-
       <EuiFlexItem grow={6}>
         {renderTable()}
       </EuiFlexItem>
@@ -349,97 +341,7 @@ export const Table = ({
   return (
     <>
       {renderSearch()}
-      {/* <EuiSpacer size="s" />
-      <EuiSpacer size="l" /> */}
       {content}
     </>
   );
 };
-
-const CompleteCheckbox = ({ completed, id, handleSetComplete }) => {
-  return (
-    <EuiFlexItem grow={false}>
-      {
-        completed ? (
-          <EuiButtonIcon 
-            onClick={(e) => {
-              e.stopPropagation()
-              handleSetComplete(id)
-            }}
-            iconType="stopFilled"
-            aria-label="Incomplete"
-          />
-        )
-        : 
-        (
-          <EuiButtonIcon 
-            onClick={(e) => {
-              e.stopPropagation()
-              handleSetComplete(id)
-            }}
-            iconType="stop"
-            aria-label="Complete"
-          />
-        )
-      }
-    </EuiFlexItem>
-  )
-}
-
-const DeleteButton = ({ todo, handleDelete }) => {
-  return (
-    <EuiButtonIcon 
-    legend="Delete task"
-    onClick={() => handleDelete(todo.id)}
-    size="s"
-    iconType="cross"
-    aria-label="Delete task"
-    />
-  )
-}
-
-const TagsWithPopover = ({ tags }) => {
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const onButtonClick = () =>
-  setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen);
-  const closePopover = () => setIsPopoverOpen(false);
-  
-  const getTagColor = (tag) => {
-    let bgcolor = null
-    TAGS.forEach((tag_obj) => {
-      if(tag_obj.name === tag) bgcolor = tag_obj.bgcolor
-    }) 
-    return bgcolor
-  }
-  
-  return (
-    <EuiFlexItem grow={false}>
-      <EuiPopover
-        button={
-          <EuiButtonEmpty
-            iconType="questionInCircle"
-            iconSide="right"
-            onClick={onButtonClick}
-          >
-            <div>
-          {
-            tags && tags.map((tag) => <EuiHealth key={tag} color={getTagColor(tag)} />)
-          }
-        </div>
-          </EuiButtonEmpty>
-        }
-        isOpen={isPopoverOpen}
-        closePopover={closePopover}
-        anchorPosition="downCenter"
-      >
-        {
-          tags && tags.map((tag) => {
-            return <div key={tag}>
-              <EuiHealth color={getTagColor(tag)}>{tag}</EuiHealth>
-            </div>
-          })
-        }
-      </EuiPopover>
-    </EuiFlexItem>
-  )
-}

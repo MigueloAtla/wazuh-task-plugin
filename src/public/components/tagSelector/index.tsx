@@ -2,7 +2,6 @@ import React from 'react'
 import {
   EuiFlexItem,
   EuiText,
-  EuiButtonEmpty,
   EuiHealth
 } from '@elastic/eui';
 import { TAGS } from '../../../constants';
