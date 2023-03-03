@@ -2,31 +2,29 @@ import React, { useContext } from 'react';
 import { i18n } from '@osd/i18n';
 import { CoreContext } from '../context';
 import useStore from '../store';
-import { Todo } from '../types';
+import { Todo, CoreContextProps } from '../types';
 
 export const useHttpActions = () => {
-  const todos = useStore(state => state.todos);
+  const todos: Todo[] = useStore(state => state.todos);
   const setTodos = useStore(state => state.setTodos);
 
-  const { http, notifications } = React.useContext(CoreContext);
+  const { http, notifications }: CoreContextProps = React.useContext(CoreContext);
 
   const getTodos = async (): Promise<void> => {
     http.get(`/api/custom_plugin/get-todos`).then((res: any) => {
       setTodos(res);
     })
   }
-  const init = async () => {
+  const init = async (): Promise<void> => {
     // if index "todos" does not exist, create it,
     // and bulk insert some data into it 
     http.post(`/api/custom_plugin/init`).then((res) => {
-      console.log('INDEX INITIALIZED')
-      console.log(res)
       getTodos()
     })
   }
-  const createTask = async (new_task: any, callback) => {
-    const data = JSON.stringify(new_task)
-    http.get(`/api/custom_plugin/create-task/${data}`).then((res) => {
+  const createTask = async (new_task: any, callback: () => void): Promise<void> => {
+    const data: string = JSON.stringify(new_task)
+    http.get(`/api/custom_plugin/create-task/${data}`).then((res: any) => {
 
       if(res.statusCode === 201) {
         notifications.toasts.addSuccess(
@@ -39,17 +37,16 @@ export const useHttpActions = () => {
     });
   }
 
-  const handleSetComplete = async (id: string) => {
+  const handleSetComplete = async (id: string): Promise<void> => {
 
-    const updatedList = todos.map(todo => {
+    const updatedList: Todo[] = todos.map(todo => {
       if (todo.id === id) {
         const args = {
           id: todo.id,
           completed: todo.completed
         }
-        const p = JSON.stringify(args)
-        http.put(`/api/custom_plugin/update-todo/${p}`).then((res) => {
-          console.log('UPDATED TODO')
+        const p: string = JSON.stringify(args)
+        http.put(`/api/custom_plugin/update-todo/${p}`).then((res: any) => {
         })
         return { ...todo, completed: !todo.completed}
       }
@@ -59,13 +56,22 @@ export const useHttpActions = () => {
     setTodos(updatedList);
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string): Promise<void> => {
     const updatedList: Todo[] = todos.filter(todo => todo.id !== id);
     http.delete(`/api/custom_plugin/delete-todo/${id}`).then((res) => {
-      console.log('DELETED TODO')
     })
     setTodos(updatedList);
   }
 
-  return { init, createTask, handleSetComplete, handleDelete, getTodos}
+  const updateTask = async (todoObj, callback) => {
+    const data = JSON.stringify(todoObj)
+    http.put(`/api/custom_plugin/edit-todo/${data}`).then((res) => {
+
+      // update todos with the updated todo
+      callback();
+    })
+  }
+  
+
+  return { init, createTask, handleSetComplete, handleDelete, getTodos, updateTask }
 }

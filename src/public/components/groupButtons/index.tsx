@@ -23,7 +23,6 @@ export const GroupButtons = ({priority, setPriority}) => {
   ];
 
   const onChange = (optionId) => {
-    console.log(optionId)
     setPriority(optionId);
   };
 

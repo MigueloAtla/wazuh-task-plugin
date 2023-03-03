@@ -5,7 +5,6 @@ import { Line } from 'react-chartjs-2';
 export const CompletedOverTime = ({ todos }) => {
 
   const getDataset = (todos) => {
-    console.log(todos)
     const completedTodos = todos.filter(todo => todo.completed);
 
     // adds completed todos cuantity of each month

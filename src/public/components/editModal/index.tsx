@@ -15,24 +15,28 @@ import {
 } from '@elastic/eui';
 import moment from 'moment';
 
+// components
 import { GroupButtons } from '../groupButtons';
 import { TagSelector } from '../tagSelector';
 
-import { CoreContext } from '../../context';
+// store
 import useStore from '../../store';
 
-import { Todo } from '../../types';
+// types
+import { Todo, HttpActions } from '../../types';
 
+// hooks
+import { useHttpActions } from '../../hooks/useHttpActions';
 
 export const EditModal = ({ todo, setTodos }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const todos: Todo[] = useStore(state => state.todos);
 
+  const { updateTask } = useHttpActions()
+
   const closeModal = () => setIsModalVisible(false);
 
-  const { http } = useContext(CoreContext);
-
-  const updateTask = () => {
+  const handleUpdateTask = () => {
     // http post to update todo
     const todoObj = {
       text,
@@ -42,9 +46,8 @@ export const EditModal = ({ todo, setTodos }) => {
       id: todo.id
     }
     const data = JSON.stringify(todoObj)
-    http.put(`/api/custom_plugin/edit-todo/${data}`).then((res) => {
-
-      // update todos with the updated todo
+    
+    updateTask(todoObj, () => {
       const newTodos = todos.map(t => {
         if(t.id === todo.id){
           const finishDate = todoObj.finish_date.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
@@ -55,7 +58,6 @@ export const EditModal = ({ todo, setTodos }) => {
         }
       })
       setTodos(newTodos)
-      
     })
     closeModal()
   };
@@ -128,7 +130,7 @@ export const EditModal = ({ todo, setTodos }) => {
         </EuiModalBody>
 
         <EuiModalFooter>
-          <EuiButton onClick={updateTask} fill>
+          <EuiButton onClick={handleUpdateTask} fill>
             Save task changes
           </EuiButton>
         </EuiModalFooter>

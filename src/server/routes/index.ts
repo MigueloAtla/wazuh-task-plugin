@@ -2,7 +2,6 @@ import { IRouter } from '../../../../src/core/server';
 import { schema } from '@osd/config-schema';
 const { Client } = require("@opensearch-project/opensearch");
 import { PluginStart as DataPluginStart, IOpenSearchSearchRequest } from '../../../../src/plugins/data/server';
-import { IOpenSearchSearchResponse } from '../../../../src/plugins/data/common';
 import { sample_todos } from '../../sample-data/sample-todos';
 const fs = require('fs');
 
@@ -10,7 +9,7 @@ var host = "os1";
 var protocol = "https";
 var port = 9200;
 var auth = "admin:admin";
-var ca_certs_path = "/home/node/kbn/plugins/custom_plugin/server/root-ca-key.pem";
+var ca_certs_path = "/home/node/kbn/plugins/custom_plugin/server/certificate/root-ca-key.pem";
 
 var client = new Client({
   node: protocol + "://" + auth + "@" + host + ":" + port,
@@ -22,52 +21,6 @@ var client = new Client({
 
 export function defineRoutes(router: IRouter, data: DataPluginStart) {
 
-  // example endpoint
-  router.get(
-    {
-      path: '/api/custom_plugin/example',
-      validate: false,
-    },
-    async (context, request, response) => {
-      return response.ok({
-        body: {
-          time: new Date().toISOString() + 'hola',
-        },
-      });
-    }
-  );
-
-
-  // Test Client // WIP
-  router.get(
-    {
-      path: '/api/custom_plugin/client',
-      validate: false
-    },
-    async (context, request, response) => {
-      console.log('client endpoint')
-
-      const query = {
-        query: {
-          match: {
-            description: {
-              query: "something"
-            }
-          }
-        }
-      }
-      const res = await client.search({
-        index: 'sample-index',
-        body: query
-      })
-      
-      console.log(res)
-      return response.ok({
-        body: res
-      });
-    }
-  )
-
   // Init Index
   router.post(
     {
@@ -75,7 +28,6 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
       validate: false
     },
     async (context, request, response) => {
-      console.log('init endpoint')
       const exists_res = await client.indices.exists({ index: 'todos' })
       if(exists_res.statusCode === 404) {
         const create_res = await client.indices.create({ index: 'todos' })
@@ -101,21 +53,6 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
     },
     async (context, request, response) => {
       
-      // const exists_res = await client.indices.exists({ index: 'todos' })
-      // if(exists_res.statusCode === 404) {
-      //   const create_res = await client.indices.create({ index: 'todos' })
-      //   // console.log('create_res', create_res)
-      //   const body = sample_todos.flatMap(doc => [
-      //     { index: { _index: 'todos' } },
-      //     doc
-      //   ])
-      //   var sample_todos_res = await client.bulk({ refresh: true, body })
-      //   // console.log('sample_todos_res', sample_todos_res)
-      //   // console.log('exists_res', exists_res)
-      // }
-
-      // else {
-
       // query for all documents in todos index
       const query = {
         query: {
@@ -131,7 +68,6 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
 
       const {hits} = res.body.hits 
 
-      // map hits and return _source, add id to _source
       const todos = hits.map((hit: any) => {
         const {_source, _id} = hit
         return {
@@ -147,7 +83,7 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
     // }
   )
 
-  // Create a todo - Working
+  // Create a todo
   router.get(
     {
       path: '/api/custom_plugin/create-task/{data}',
@@ -283,60 +219,9 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
     }
   )
 
-  // Initial import
-  // router.post(
-  //   {
-  //     path: '/api/custom_plugin/init',
-  //     validate: false
-  //   },
-  //   async (context, request, response) => {
-
-  //     const res = await client.indices.exists({ index: 'todos' })
-
-  //     console.log(res)
-
-  //     // const body = [
-  //     //   {
-  //     //     index: { _index: 'testing' }
-  //     //   },
-  //     //   {
-  //     //     _id: 1,
-  //     //     text: "Learn about Elasticsearch",
-  //     //     tags: ["learning", "elasticsearch"],
-  //     //   }
-  //     // ]
-
-  //     // const body = {
-  //     //   "index-pattern": {
-  //     //     title: "testing-*"
-  //     //   }
-  //     // }
-
-  //     // const body = recipes.map(doc => [
-  //     //   { index: { _index: 'recipes' } },
-  //     //   doc
-  //     // ])
-
-  //     // var res = await client.bulk({ refresh: true, body })
-
-  //     // var res = client.indices.getMapping({ index : 'testing'},
-  //     //   function (error, result) {
-  //     //     if (error) {
-  //     //       console.error(error);
-  //     //     } else {
-  //     //       console.log(result.body.testing.mappings.properties);
-  //     //     }
-  //     //   }
-  //     // )
-      
-  //     return response.ok({
-  //       body: res
-  //     });
-  //   }
-  // )
 
   
-  // Search by Field Data plugin - WIP
+  // Search by Field Data plugin
   router.get(
     {
       path: '/api/custom_plugin/search_by_field',
@@ -344,7 +229,7 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
     },
 
     async (context, request, response) => {
-      const index = 'sample-index'
+      const index = 'todos'
       const params: RequestParams.Search = {
         index,
       };
@@ -358,7 +243,7 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
               aggs: {
                 '1': {
                   avg: {
-                    field: 'description',
+                    field: 'text',
                   },
                 },
               },

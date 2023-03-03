@@ -285,7 +285,7 @@ export const Table = () => {
       pageIndex: pageIndex,
       pageSize: pageSize,
       totalItemCount: totalItemCount,
-      pageSizeOptions: [2, 15, 30],
+      pageSizeOptions: [15, 30, 50],
     };
   
     const sorting = {

@@ -15,13 +15,13 @@ import { useHttpActions } from '../../hooks/useHttpActions';
 import useStore from '../../store';
 
 //types
-import { Todo, Tab } from '../../types';
+import { Todo, Tab, HttpActions } from '../../types';
 
 export const AppConatiner: React.FC = () => {
   
   const todos: Todo[] = useStore(state => state.todos);
 
-  const { init, getTodos } = useHttpActions();
+  const { init } = useHttpActions();
 
   useEffect(() => {
     init()
