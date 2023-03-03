@@ -9,34 +9,6 @@ yarn
 yarn start --no-base-path
 ```
 # Folder structure
-src/
-├── common
-├── public/
-│   ├── components/
-│   │   ├── appContainer
-│   │   ├── completedCheckbox
-│   │   ├── deleteButton
-│   │   ├── editModal
-│   │   ├── groupButtons
-│   │   ├── input
-│   │   ├── modal
-│   │   ├── table
-│   │   ├── tagSelector
-│   │   ├── tagsWithPopover
-│   │   ├── todoTabContent
-│   │   └── visualizations
-│   ├── hooks/
-│   │   └── useHttpActions.tsx
-│   ├── constants.ts
-│   ├── context.ts
-│   ├── store.ts
-│   ├── ...
-│   └── types.ts
-│ 
-└── server/
-    ├── routes/
-    │   └── index.ts
-    └── .../
 
 * **components** folder has every components use in the plugin.
 * **hooks** contains useHttpActions, to connect request functions with several components in the plugin.
@@ -96,7 +68,7 @@ It is possible to change the amount of elements displayed in each page.
 
 ### Search and filtering
 
-*On the top of the table there is a search bar, with some options. You can write text to filter by the text field of the tasks, filter if they are completed, or by tag.
+* On the top of the table there is a search bar, with some options. You can write text to filter by the text field of the tasks, filter if they are completed, or by tag.
 ![search_filter](./docs/search-filter.png)
 
 ## Visualizations View
