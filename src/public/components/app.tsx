@@ -12,10 +12,10 @@ import {
   EuiPageContentHeader,
   EuiPageHeader,
 } from '@elastic/eui';
-import { DataPublicPluginStart } from '../../../../src/plugins/data/public'
+// import { DataPublicPluginStart } from '../../../../src/plugins/data/public'
 
-import { CoreStart } from '../../../../src/core/public';
-import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
+// import { CoreStart } from '../../../../src/core/public';
+// import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
 
 import { PLUGIN_ID, PLUGIN_NAME } from '../../common';
 
@@ -28,7 +28,6 @@ export const CustomPluginApp = ({
   notifications,
   http,
   navigation,
-  data
 }: CustomPluginAppDeps) => {
   // Render the application DOM.
   // Note that `navigation.ui.TopNavMenu` is a stateful component exported on the `navigation` plugin's start contract.

@@ -7,7 +7,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
-  EuiButtonIcon,
   EuiText,
   EuiCallOut,
   EuiSearchBar,

@@ -5,8 +5,6 @@ import {
 } from '@elastic/eui';
 
 export const GroupButtons = ({priority, setPriority}) => {
-  const basicButtonGroupPrefix = `basicButtonGroup-${Math.floor(Math.random() * 1000000000000)}`
-
   const toggleButtons = [
     {
       id: '0',

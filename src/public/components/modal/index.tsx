@@ -6,17 +6,12 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
-  EuiCodeBlock,
   EuiDatePicker, 
   EuiSpacer, 
-  EuiFormRow,
   EuiFlexItem,
   EuiText,
-  useGeneratedHtmlId,
-  EuiButtonGroup,
   EuiButtonEmpty
 } from '@elastic/eui';
-import { TAGS } from '../../../constants';
 
 import { GroupButtons } from '../groupButtons';
 import { TagSelector } from '../tagSelector';
@@ -26,8 +21,6 @@ export const Modal = ({ finishDate, setFinishDate, priority, setPriority, tags, 
 
   const closeModal = () => setIsModalVisible(false);
   const showModal = () => setIsModalVisible(true);
-
-  // const [startDate, setStartDate] = useState(null);
 
   const handleChange = (date) => {
     setFinishDate(date);

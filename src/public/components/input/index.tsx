@@ -6,7 +6,6 @@ import {
  import { Modal } from '../modal';
 import useStore from '../../store';
 import {Todo} from '../../types';
-// import { CoreContext } from '../../context';
 import { useHttpActions } from '../../hooks/useHttpActions';
 
 export const TodoInput = () => {
@@ -19,9 +18,6 @@ export const TodoInput = () => {
   const todos = useStore(state => state.todos);
   const setTodos = useStore(state => state.setTodos);
 
-  // const core = useContext(CoreContext);
-  // const { http, notifications } = core;
-
   const onCreateHandler = () => {
     const new_task = {
       finish_date: finishDate,
@@ -30,9 +26,6 @@ export const TodoInput = () => {
       tags,
       created_at: new Date().toISOString()
     }
-    // const data = JSON.stringify(p)
-    // console.log('before create', data)
-
     createTask(new_task, () => {
       setText('');
       setFinishDate(null)
@@ -43,22 +36,6 @@ export const TodoInput = () => {
       setTodos(todoList)
     })
     
-    // http.get(`/api/custom_plugin/create-task/${data}`).then((res) => {
-    //   if(res.statusCode === 201) {
-    //     notifications.toasts.addSuccess(
-    //       i18n.translate('customPlugin.dataUpdated', {
-    //         defaultMessage: `Todo ${text}: created`,
-    //       })
-    //     );
-    //     setText('');
-    //     setFinishDate(null)
-    //     setPriority(null)
-    //     const finishDateFormated = p.finish_date && p.finish_date.format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-    //     p.finish_date = finishDateFormated
-    //     const todoList = [...todos, p];
-    //     setTodos(todoList)
-    //   }
-    // });
   };
   const handleAddTodo = (e) => {
     if (e.key.toLowerCase() === 'enter') {

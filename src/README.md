@@ -1,5 +1,5 @@
 # Start with the project
-1.Install all the dependencies in the root of this project using the command yarn:
+1.Install all the dependencies in the ./src folder of this project using the command yarn:
 ```shell
 yarn
 ```
@@ -10,12 +10,12 @@ yarn start --no-base-path
 ```
 # Folder structure
 
-* **components** folder has every components use in the plugin.
-* **hooks** contains useHttpActions, to connect request functions with several components in the plugin.
-* **constants.ts** has some constants used in the plugin, in this case, *TAGS* object.
-* **context.ts** provides http and notifications core utitities along the aplication, avoiding prop drilling.
-* **store.ts** has global state, manage by *zustand*.
-* **types.ts** exports multiple interfaces.
+* **public/components** folder has every components use in the plugin.
+* **public/hooks** contains useHttpActions, to connect request functions with several components in the plugin.
+* **public/constants.ts** has some constants used in the plugin, in this case, *TAGS* object.
+* **public/context.ts** provides http and notifications core utitities along the aplication, avoiding prop drilling.
+* **public/store.ts** has the global state, managed by *zustand*.
+* **public/types.ts** exports multiple interfaces.
 * **server/routes** has the endpoints to connect the frontend with the data.
 
 # Run tests

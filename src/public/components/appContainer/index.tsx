@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useContext } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { 
   EuiTabs,
   EuiTab,
@@ -15,7 +15,7 @@ import { useHttpActions } from '../../hooks/useHttpActions';
 import useStore from '../../store';
 
 //types
-import { Todo, Tab, HttpActions } from '../../types';
+import { Todo, Tab } from '../../types';
 
 export const AppConatiner: React.FC = () => {
   
