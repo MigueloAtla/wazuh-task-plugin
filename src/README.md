@@ -10,7 +10,7 @@ yarn start --no-base-path
 ```
 # Folder structure
 
-* **public/components** folder has every components use in the plugin.
+* **public/components** folder has every component used in the plugin.
 * **public/hooks** contains useHttpActions, to connect request functions with several components in the plugin.
 * **public/constants.ts** has some constants used in the plugin, in this case, *TAGS* object.
 * **public/context.ts** provides http and notifications core utitities along the aplication, avoiding prop drilling.
