@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { createContext } from 'react';
 import { i18n } from '@osd/i18n';
 import { FormattedMessage, I18nProvider } from '@osd/i18n/react';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -29,6 +29,7 @@ import { PLUGIN_ID, PLUGIN_NAME } from '../../common';
 
 // Components
 import { AppConatiner } from './appContainer';
+import { CoreContext } from '../context.ts';
 
 interface CustomPluginAppDeps {
   basename: string;
@@ -51,6 +52,7 @@ export const CustomPluginApp = ({
 
   // Render the application DOM.
   // Note that `navigation.ui.TopNavMenu` is a stateful component exported on the `navigation` plugin's start contract.
+
   return (
     <Router basename={basename}>
       <I18nProvider>
@@ -63,27 +65,15 @@ export const CustomPluginApp = ({
           <EuiPage restrictWidth="1000px">
             <EuiPageBody component="main">
               <EuiPageHeader>
-                {/* <EuiTitle size="l">
-                  <h1>
-                    <FormattedMessage
-                      id="customPlugin.helloWorldText"
-                      defaultMessage="{name}"
-                      values={{ name: PLUGIN_NAME }}
-                    />
-                  </h1>
-                </EuiTitle> */}
+
               </EuiPageHeader>
               <EuiPageContent>
                 <EuiPageContentHeader>
                 </EuiPageContentHeader>
                 <EuiPageContentBody>
-
-                  {/* <EuiText>
-                    <EuiHorizontalRule />
-                  </EuiText> */}
-
-                  <AppConatiner http={http} notifications={notifications} />
-                  
+                  <CoreContext.Provider value={{ http, notifications }}>
+                    <AppConatiner />
+                  </CoreContext.Provider>
                 </EuiPageContentBody>
               </EuiPageContent>
             </EuiPageBody>

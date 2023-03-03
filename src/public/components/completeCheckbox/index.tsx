@@ -12,7 +12,7 @@ export const CompleteCheckbox = ({ completed, id, handleSetComplete }) => {
               handleSetComplete(id)
             }}
             iconType="stopFilled"
-            aria-label="Incomplete"
+            aria-label="Complete"
           />
         )
         : 
@@ -23,7 +23,7 @@ export const CompleteCheckbox = ({ completed, id, handleSetComplete }) => {
               handleSetComplete(id)
             }}
             iconType="stop"
-            aria-label="Complete"
+            aria-label="Incomplete"
           />
         )
       }

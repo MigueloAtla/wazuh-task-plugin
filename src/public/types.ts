@@ -13,11 +13,17 @@ export interface AppPluginStartDependencies {
 }
 
 export interface Todo {
+  id: string;
   completed: boolean;
   completed_at?: Date;
-  created_at: Date;
-  finish_date?: Date;
+  created_at: string;
+  finish_date?: string;
   priority: number;
   tags: string[];
   text: string;
+}
+export interface Tab {
+  id: string;
+  name: string;
+  content: JSX.Element;
 }

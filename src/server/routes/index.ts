@@ -3,6 +3,7 @@ import { schema } from '@osd/config-schema';
 const { Client } = require("@opensearch-project/opensearch");
 import { PluginStart as DataPluginStart, IOpenSearchSearchRequest } from '../../../../src/plugins/data/server';
 import { IOpenSearchSearchResponse } from '../../../../src/plugins/data/common';
+import { sample_todos } from '../../sample-data/sample-todos';
 const fs = require('fs');
 
 var host = "os1";
@@ -67,6 +68,31 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
     }
   )
 
+  // Init Index
+  router.post(
+    {
+      path: '/api/custom_plugin/init',
+      validate: false
+    },
+    async (context, request, response) => {
+      console.log('init endpoint')
+      const exists_res = await client.indices.exists({ index: 'todos' })
+      if(exists_res.statusCode === 404) {
+        const create_res = await client.indices.create({ index: 'todos' })
+        const body = sample_todos.flatMap(doc => [
+          { index: { _index: 'todos' } },
+          doc
+        ])
+        var sample_todos_res = await client.bulk({ refresh: true, body })
+      }
+      return response.ok({
+        body: {
+          message: 'Index initialized',
+        }
+      })
+    }
+  )
+
   // Get Tasks
   router.get(
     {
@@ -74,6 +100,21 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
       validate: false
     },
     async (context, request, response) => {
+      
+      // const exists_res = await client.indices.exists({ index: 'todos' })
+      // if(exists_res.statusCode === 404) {
+      //   const create_res = await client.indices.create({ index: 'todos' })
+      //   // console.log('create_res', create_res)
+      //   const body = sample_todos.flatMap(doc => [
+      //     { index: { _index: 'todos' } },
+      //     doc
+      //   ])
+      //   var sample_todos_res = await client.bulk({ refresh: true, body })
+      //   // console.log('sample_todos_res', sample_todos_res)
+      //   // console.log('exists_res', exists_res)
+      // }
+
+      // else {
 
       // query for all documents in todos index
       const query = {
@@ -103,6 +144,7 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
         body: todos 
       });
     }
+    // }
   )
 
   // Create a todo - Working
@@ -119,14 +161,14 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
 
       const {data} = request.params
       const content = JSON.parse(data)
-      const {text, priority, finishDate, tags, created_at } = content
+      const {text, priority, finish_date, tags, created_at } = content
 
       var document = {
         text,
         tags,
         priority,
         completed: false,
-        finish_date: finishDate,
+        finish_date: finish_date,
         created_at
       };
     
@@ -240,6 +282,58 @@ export function defineRoutes(router: IRouter, data: DataPluginStart) {
       });
     }
   )
+
+  // Initial import
+  // router.post(
+  //   {
+  //     path: '/api/custom_plugin/init',
+  //     validate: false
+  //   },
+  //   async (context, request, response) => {
+
+  //     const res = await client.indices.exists({ index: 'todos' })
+
+  //     console.log(res)
+
+  //     // const body = [
+  //     //   {
+  //     //     index: { _index: 'testing' }
+  //     //   },
+  //     //   {
+  //     //     _id: 1,
+  //     //     text: "Learn about Elasticsearch",
+  //     //     tags: ["learning", "elasticsearch"],
+  //     //   }
+  //     // ]
+
+  //     // const body = {
+  //     //   "index-pattern": {
+  //     //     title: "testing-*"
+  //     //   }
+  //     // }
+
+  //     // const body = recipes.map(doc => [
+  //     //   { index: { _index: 'recipes' } },
+  //     //   doc
+  //     // ])
+
+  //     // var res = await client.bulk({ refresh: true, body })
+
+  //     // var res = client.indices.getMapping({ index : 'testing'},
+  //     //   function (error, result) {
+  //     //     if (error) {
+  //     //       console.error(error);
+  //     //     } else {
+  //     //       console.log(result.body.testing.mappings.properties);
+  //     //     }
+  //     //   }
+  //     // )
+      
+  //     return response.ok({
+  //       body: res
+  //     });
+  //   }
+  // )
 
   
   // Search by Field Data plugin - WIP

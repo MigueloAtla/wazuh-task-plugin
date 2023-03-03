@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   EuiButton,
   EuiModal,
@@ -10,20 +10,27 @@ import {
   EuiSpacer, 
   EuiFlexItem,
   EuiText,
-  EuiButtonEmpty,
   EuiButtonIcon,
   EuiFieldText
 } from '@elastic/eui';
 import moment from 'moment';
-import { TAGS } from '../../../constants';
 
 import { GroupButtons } from '../groupButtons';
 import { TagSelector } from '../tagSelector';
 
-export const EditModal = ({ todo, http, todos, setTodos }) => {
+import { CoreContext } from '../../context';
+import useStore from '../../store';
+
+import { Todo } from '../../types';
+
+
+export const EditModal = ({ todo, setTodos }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const todos: Todo[] = useStore(state => state.todos);
 
   const closeModal = () => setIsModalVisible(false);
+
+  const { http } = useContext(CoreContext);
 
   const updateTask = () => {
     // http post to update todo

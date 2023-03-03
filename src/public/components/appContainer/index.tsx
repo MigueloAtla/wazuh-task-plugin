@@ -1,105 +1,52 @@
-import React, { useEffect, useState, useMemo} from 'react';
+import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { 
   EuiTabs,
   EuiTab,
 } from '@elastic/eui';
+
+// tabs components
 import { TodoTabContent } from '../todoTabContent';
 import { VisualizationTabContent } from '../visualizations';
+
+// hooks
+import { useHttpActions } from '../../hooks/useHttpActions';
+
+//store
 import useStore from '../../store';
 
-export const AppConatiner = ({ http, notifications }) => {
-  // const [todos, setTodos] = useState([])
-  const todos = useStore(state => state.todos);
-  const setTodos = useStore(state => state.setTodos);
+//types
+import { Todo, Tab } from '../../types';
 
-  const getTodos = () => {
-    http.get(`/api/custom_plugin/get-todos`).then((res) => {
-      setTodos(res);
-    })
-  }
+export const AppConatiner: React.FC = () => {
+  
+  const todos: Todo[] = useStore(state => state.todos);
+
+  const { init, getTodos } = useHttpActions();
 
   useEffect(() => {
-    getTodos()
+    init()
   }, [])
 
-  const addTodo = (title) => {
-    const lastId = todos.length > 0 ? todos[todos.length - 1].id : 1;
-
-    const newTodo = {
-      id: lastId + 1,
-      title,
-      completed: false
-    }
-
-    const todoList = [...todos]
-    todoList.push(newTodo);
-
-    setTodos(todoList);
-  }
-
-  const handleSetComplete = (id) => {
-    const updatedList = todos.map(todo => {
-      if (todo.id === id) {
-        const args = {
-          id: todo.id,
-          completed: todo.completed
-        }
-        const p = JSON.stringify(args)
-        http.put(`/api/custom_plugin/update-todo/${p}`).then((res) => {
-          console.log('UPDATED TODO')
-        })
-        return { ...todo, completed: !todo.completed}
-      }
-      return todo;
-    })
-
-    setTodos(updatedList);
-  } 
-
-  const handleClearComplete = () => {
-    const updatedList = todos.filter(todo => !todo.completed);
-    setTodos(updatedList);
-  };
-
-  const handleDelete = (id) => {
-    const updatedList = todos.filter(todo => todo.id !== id);
-    console.log(id)
-    http.delete(`/api/custom_plugin/delete-todo/${id}`).then((res) => {
-      console.log('DELETED TODO')
-    })
-    setTodos(updatedList);
-  }
-
   // Tabs
-  const tabs = [
+  const tabs: Tab[] = [
     {
       id: 'todos-tab--id',
       name: 'Tasks',
       content: (
-        <TodoTabContent 
-          http={http}
-          notifications={notifications}
-          addTodo={addTodo}
-          // todos={todos}
-          // setTodos={setTodos}
-          handleSetComplete={handleSetComplete}
-          handleDelete={handleDelete}
-          handleClearComplete={handleClearComplete}
-        />
+        <TodoTabContent />
       ),
     },
     {
       id: 'visualization-tab--id',
       name: 'Visualizations',
       content: (
-        <VisualizationTabContent todos={todos}/>
+        <VisualizationTabContent />
       ),
     },
-    
   ];
 
   // logic for tabs
-  const [selectedTabId, setSelectedTabId] = useState('todos-tab--id');
+  const [selectedTabId, setSelectedTabId] = useState<string>('todos-tab--id');
   const selectedTabContent = useMemo(() => {
     return tabs.find((obj) => obj.id === selectedTabId)?.content;
   }, [ selectedTabId, todos ]);
@@ -108,8 +55,8 @@ export const AppConatiner = ({ http, notifications }) => {
     setSelectedTabId(id);
   };
 
-  const renderTabs = () => {
-    return tabs.map((tab, index) => (
+  const renderTabs = (): JSX.Element[] => {
+    return tabs.map((tab: Tab, index: number) => (
       <EuiTab
         key={index}
         onClick={() => onSelectedTabChanged(tab.id)}

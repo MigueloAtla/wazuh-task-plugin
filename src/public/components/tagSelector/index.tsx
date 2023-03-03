@@ -4,7 +4,7 @@ import {
   EuiText,
   EuiHealth
 } from '@elastic/eui';
-import { TAGS } from '../../../constants';
+import { TAGS } from '../../constants';
 
 export const TagSelector = ({ tags, setTags }) => {
   return (

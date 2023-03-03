@@ -4,8 +4,10 @@ import { Chart, Bar } from "react-chartjs-2"
 import { TagsDoughnutChart } from "./doughnut"
 import { CompletedOverTime } from "./completedOverTime"
 import { PriorityChart } from "./priorityChart"
+import useStore from "../../store"
 
-export const VisualizationTabContent = ({ todos }) => {
+export const VisualizationTabContent = () => {
+  const todos = useStore(state => state.todos)
 
   const [_, setUpdate] = useState(false)
 

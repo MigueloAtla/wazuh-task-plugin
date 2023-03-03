@@ -15,7 +15,7 @@
     "zustand": "^4.3.5"
   },
   "jest": {
-    "rootDir": "./",
+    "roots": ["<rootDir>"],
     "modulePaths": [
       "src",
       "test"
@@ -24,8 +24,7 @@
       "#(.*)": "<rootDir>/node_modules/$1"
     },
     "moduleDirectories": [
-      "node_modules",
-      "src"
+      "node_modules"
     ],
     "moduleFileExtensions": [
       "json",
@@ -37,21 +36,18 @@
       "cjs"
     ],
     "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.test.json"
-      },
-      "transform": {
-        "\\.tsx?$": "ts-jest",
-        "\\.jsx?$": "babel-jest"
-      }
     },
     "testEnvironment": "jest-environment-jsdom",
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(uuid)/)"
+    ],
     "testPathIgnorePatterns": [
       "node_modules"
     ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-dom/"
-    ]
+    ],
+    "moduleNameMapper":{"^uuid$": "uuid"}
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",

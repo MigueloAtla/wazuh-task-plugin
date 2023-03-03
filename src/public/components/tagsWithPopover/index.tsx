@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { EuiPopover, EuiButtonEmpty, EuiHealth, EuiFlexItem } from '@elastic/eui'
-import { TAGS } from '../../../constants';
+import { TAGS } from '../../constants';
 
 export const TagsWithPopover = ({ tags }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);

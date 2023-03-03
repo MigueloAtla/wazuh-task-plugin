@@ -19,25 +19,9 @@ import { DeleteButton } from '../deleteButton';
 import { CompleteCheckbox } from '../completeCheckbox';
 
 import useStore from '../../store';
+import { useHttpActions } from '../../hooks/useHttpActions';
 
 import { TAGS } from '../../constants';
-
-// type Todo = {
-//   id: number;
-//   firstName: string | null | undefined;
-//   lastName: string;
-//   github: string;
-//   dateOfBirth: Date;
-//   online: boolean;
-//   location: {
-//     city: string;
-//     country: string;
-//   };
-// };
-
-// const users: User[] = [];
-
-// const todos = [];
 
 const loadTags = () => {
   return new Promise((resolve) => {
@@ -54,14 +38,7 @@ const loadTags = () => {
 
 const initialQuery = EuiSearchBar.Query.MATCH_ALL;
 
-export const Table = ({
-  http,
-  // todos,
-  // setTodos,
-  handleSetComplete,
-  handleDelete,
-  handleClearComplete,
-}) => {
+export const Table = () => {
   const [enableAll, setEnableAll] = useState(false);
   const [readonly, setReadonly] = useState(false);
 
@@ -75,6 +52,8 @@ export const Table = ({
 
   const todos = useStore((state) => state.todos);
   const setTodos = useStore((state) => state.setTodos);
+
+  const { handleSetComplete, handleDelete } = useHttpActions();
 
   const onChange = ({ query, error }) => {
     if (error) {
@@ -222,8 +201,8 @@ export const Table = ({
         render: (todo) => (
             <EditModal 
               todo={todo} 
-              http={http} 
-              todos={todos} 
+              // http={http} 
+              // todos={todos} 
               setTodos={setTodos} 
               />
           )
